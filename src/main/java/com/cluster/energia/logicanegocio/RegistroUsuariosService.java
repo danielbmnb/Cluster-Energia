@@ -18,11 +18,6 @@ public class RegistroUsuariosService {
 
 		var retornoServicio = new HashMap<String, Object>();
 
-		/*
-		 * Primero validamos que el usuario no se encuentre registado, si lo está
-		 * devolvera un error indicando que el usuario ya existe en la base de datos
-		 */
-		
 		var usuarioRegistrado = this.validarUsuarioRegistrado(usuario);
 				
 		if (usuarioRegistrado == true) {

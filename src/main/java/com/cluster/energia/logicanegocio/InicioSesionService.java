@@ -20,21 +20,33 @@ public class InicioSesionService {
 		var existeUsuario = false;
 		var logeado = true;
 		var informacionUsuario = new Usuario();
-		// primero validamos si el usuario ya existe
 
 		var usuarioExistente = usuarioRepository.existeUsuario(usuario.getNit());
 
 		if (usuarioExistente == 0) {
-			throw new Exception(
+
+			datosLogin.put("usuarioNoEncontrado",
 					"El usuario con identificación " + usuario.getNit() + " no existe, por favor registre el usuario");
+			logeado = false;
+			return datosLogin;
+
 		} else {
 
-			logeado = true;
-			informacionUsuario = usuarioRepository.informacionUsuario(usuario.getNit());
+			var passwordActual = usuarioRepository.password(usuario.getNit());
 
-			if (informacionUsuario != null) {
-				existeUsuario = true;
-				datosLogin.put("usuario", informacionUsuario);
+			if (passwordActual != null && passwordActual.equalsIgnoreCase(usuario.getPassword())) {
+
+				logeado = true;
+				informacionUsuario = usuarioRepository.informacionUsuario(usuario.getNit());
+
+				if (informacionUsuario != null) {
+					existeUsuario = true;
+					datosLogin.put("usuario", informacionUsuario);
+				}
+			} else {
+
+				datosLogin.put("passwordIncorrecta", "La contraseña es incorrecta, por favor verifique");
+				return datosLogin;
 			}
 
 		}

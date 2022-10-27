@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,16 +36,15 @@ public class ClusterEnergiaController {
 	@Autowired
 	private ListadoYDetalleUsuarios clusterEnergiaService;
 
-	@Autowired	
+	@Autowired
 	private ActualizarDatos actualizarDatosService;
-	
-	@Autowired	
+
+	@Autowired
 	private InicioSesionService inicioSesionService;
-	
-	@Autowired	
+
+	@Autowired
 	private RegistroUsuariosService registroUsuariosService;
-	
-	
+
 	@GetMapping(value = "/listar")
 	public ResponseEntity<List<Usuario>> listarUsuarios(@RequestHeader String Authorization) {
 
@@ -61,17 +61,48 @@ public class ClusterEnergiaController {
 		return null;
 	}
 
+	@GetMapping(value = "/listarUsuarios")
+	public ResponseEntity<List<Usuario>> usuarios(@RequestHeader String Authorization) {
+
+		if (Authorization != null) {
+
+			var listaUsuarios = clusterEnergiaService.usuarios();
+
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaUsuarios);
+		}
+		return null;
+	}
+
+	@GetMapping(value = "/listarAdministradores")
+	public ResponseEntity<List<Usuario>> listarAdministradores(@RequestHeader String Authorization) {
+
+		if (Authorization != null) {
+
+			var listaUsuarios = clusterEnergiaService.administradores();
+
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaUsuarios);
+		}
+		return null;
+	}
+
 	@PostMapping("/registrar")
-	public ResponseEntity<Map<String, Object>> registrarUsuario(@RequestBody Usuario usuario)
-			throws Exception {
+	public ResponseEntity<Map<String, Object>> registrarUsuario(@RequestBody Usuario usuario) throws Exception {
 
-			var registroUsuario = registroUsuariosService.registrarUsuarios(usuario);
+		var registroUsuario = registroUsuariosService.registrarUsuarios(usuario);
 
-			if (registroUsuario != null) {
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(registroUsuario);
-			} else {
-				throw new Exception("No se pudo registrar el usuario");
-			}
+		if (registroUsuario != null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(registroUsuario);
+		} else {
+			throw new Exception("No se pudo registrar el usuario");
+		}
+	}
+
+	@GetMapping("/cantidadUsuarios")
+	public ResponseEntity<Map<String, Object>> cantidadUsuariosYAdministradores() {
+
+		var cantidadUsuarios = clusterEnergiaService.cantidadUsuariosYAdministradores();
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cantidadUsuarios);
 	}
 
 	@PutMapping("/actualizar/{id}")
@@ -125,6 +156,19 @@ public class ClusterEnergiaController {
 
 		} else {
 			throw new Exception("El usuario debe estar registraddo");
+		}
+		return null;
+	}
+
+	@DeleteMapping("/eliminarUsuario/{id}")
+	public ResponseEntity<Map<String, Object>> eliminarUsuario(@PathVariable Long id,
+			@RequestHeader String Authorization) {
+
+		if (Authorization != null) {
+
+			var usuarioEliminar = clusterEnergiaService.eliminarUsuario(id);
+
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(usuarioEliminar);
 		}
 		return null;
 	}

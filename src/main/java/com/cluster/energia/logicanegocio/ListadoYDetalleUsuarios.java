@@ -6,9 +6,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.cluster.energia.constantes.Constantes;
+import com.cluster.energia.modelo.TipoUsuario;
 import com.cluster.energia.modelo.Usuario;
+import com.cluster.energia.repositorio.CategoriaRepository;
+import com.cluster.energia.repositorio.TipoDocumentosRepository;
+import com.cluster.energia.repositorio.TipoUsuarioRepository;
 import com.cluster.energia.repositorio.UsuarioRepository;
 
 @Service
@@ -17,19 +20,23 @@ public class ListadoYDetalleUsuarios {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	@Autowired
+	private TipoUsuarioRepository tipoUsuarioRepository;
+	
+	@Autowired
+	private TipoDocumentosRepository tipoDocumentoRepository;
+	
+	@Autowired
+	private CategoriaRepository categoriaRepository;
+	
 	@Transactional(readOnly = true)
 	public List<Usuario> listaUsuarios(){
 		return usuarioRepository.findAll();
 	}
 	
 	@Transactional(readOnly = true)
-	public List<Usuario> usuarios(){
-		return usuarioRepository.usuarios(Constantes.USUARIO);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<Usuario> administradores(){
-		return usuarioRepository.usuarios(Constantes.ADMINISTRADOR);
+	public List<TipoUsuario> listarTiposUsuario(){
+		return tipoUsuarioRepository.findAll();
 	}
 	
 	@Transactional(readOnly = true)
@@ -54,6 +61,30 @@ public class ListadoYDetalleUsuarios {
 
 		retornoServicio.put("cantidadUsuarios", cantidadUsuarios);
 		retornoServicio.put("cantidadAdministradores", cantidadAdministradores);
+
+		return retornoServicio;
+	}
+	
+	@Transactional(readOnly = true)
+	public Map<String, Object> cantidadTipoDocumentos(){
+	
+		var retornoServicio = new HashMap<String, Object>();
+		
+		var cantidadDocumentos = tipoDocumentoRepository.cantidadDocumento();
+
+		retornoServicio.put("cantidadDocumentos", cantidadDocumentos);
+
+		return retornoServicio;
+	}
+	
+	@Transactional(readOnly = true)
+	public Map<String, Object> cantidadCategorias(){
+	
+		var retornoServicio = new HashMap<String, Object>();
+		
+		var cantidadCategorias = categoriaRepository.cantidadCategoria();
+
+		retornoServicio.put("cantidadCategorias", cantidadCategorias);
 
 		return retornoServicio;
 	}

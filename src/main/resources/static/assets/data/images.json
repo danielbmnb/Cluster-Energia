@@ -1,6 +1,11 @@
 {
   "data": [
     {
+      "previewImageSrc": "./assets/images/fondoCluster3.jpg",
+      "thumbnailImageSrc": "./assets/images/fondoCluster3.jpg",
+      "alt": "galeria"
+    },
+    {
       "previewImageSrc": "./assets/images/fondoCluster1.jpg",
       "thumbnailImageSrc": "./assets/images/fondoCluster1.jpg",
       "alt": "galeria"
@@ -8,11 +13,6 @@
     {
       "previewImageSrc": "./assets/images/fondoCluster2.jpg",
       "thumbnailImageSrc": "./assets/images/fondoCluster2.jpg",
-      "alt": "galeria"
-    },
-    {
-      "previewImageSrc": "./assets/images/fondoCluster3.jpg",
-      "thumbnailImageSrc": "./assets/images/fondoCluster3.jpg",
       "alt": "galeria"
     },
     {

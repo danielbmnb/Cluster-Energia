@@ -62,17 +62,25 @@ public class RegistroUsuariosService {
 		var datosValidados = new HashMap<String, Object>();
 		var datosNoValidos = false;
 		
-		if(usuario.getNombre() == null) {
+		if(usuario.getNombre() == null || usuario.getNombre().length() <= 0 ||
+				usuario.getNombre().equalsIgnoreCase("")) {
 			datosValidados.put("nombreRequerido", "El nombre es obligatorio");
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getApellido() == null) {
+		if(usuario.getApellido() == null || usuario.getApellido().length() <= 0 ||
+				usuario.getApellido().equalsIgnoreCase("")) {
 			datosValidados.put("apellidoRequerido", "El apellido es obligatorio");
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getNit() == null) {
+		if(usuario.getTipoDocumento() == null || usuario.getTipoDocumento().getId() == null) {
+			datosValidados.put("tipoDocumentoRequerido", "El tipo de documento es obligatorio");
+			datosNoValidos = true;
+		}
+		
+		if(usuario.getNit() == null || usuario.getNit().length() <= 0 ||
+				usuario.getNit().equalsIgnoreCase("")) {
 			datosValidados.put("nitRequerido", "El nit es obligatorio");
 			datosNoValidos = true;
 		}
@@ -82,28 +90,44 @@ public class RegistroUsuariosService {
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getCargo() == null) {
-			datosValidados.put("cargoRequerido", "El cargo es obligatorio");
+		if(usuario.getPassword() == null || usuario.getPassword().length() <= 0 ||
+				usuario.getPassword().equalsIgnoreCase("")) {
+			datosValidados.put("passwordRequerido", "La contraseña es obligatoria");
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getCiudad() == null) {
-			datosValidados.put("nitRequerido", "El nit es obligatorio");
+		if(usuario.getCorreo() == null || usuario.getCorreo().length() <= 0 ||
+				usuario.getCorreo().equalsIgnoreCase("")) {
+			datosValidados.put("correoRequerido", "El correo es obligatorio");
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getNit() == null) {
-			datosValidados.put("nitRequerido", "El nit es obligatorio");
-			datosNoValidos = true;
-		}
-		
-		if(usuario.getEmpresa() == null) {
+		if(usuario.getEmpresa() == null || usuario.getEmpresa().length() <= 0 ||
+				usuario.getEmpresa().equalsIgnoreCase("")) {
 			datosValidados.put("empresaRequerido", "La empresa es obligatoria");
 			datosNoValidos = true;
 		}
 		
-		if(usuario.getPais() == null) {
+		if(usuario.getCiudad() == null || usuario.getCiudad().length() <= 0 ||
+				usuario.getCiudad().equalsIgnoreCase("")) {
+			datosValidados.put("ciudadRequerido", "La ciudad es obligatoria");
+			datosNoValidos = true;
+		}
+		
+		if(usuario.getPais() == null || usuario.getPais().length() <= 0 ||
+				usuario.getPais().equalsIgnoreCase("")) {
 			datosValidados.put("paisRequerido", "El país es obligatorio");
+			datosNoValidos = true;
+		}
+		
+		if(usuario.getCargo() == null || usuario.getCargo().length() <= 0 ||
+				usuario.getCargo().equalsIgnoreCase("")) {
+			datosValidados.put("cargoRequerido", "El cargo es obligatorio");
+			datosNoValidos = true;
+		}
+		
+		if(usuario.getCategoria() == null || usuario.getCategoria().getId() == null) {
+			datosValidados.put("categoriaRequerido", "La categoria es obligatoria");
 			datosNoValidos = true;
 		}
 		
@@ -111,11 +135,7 @@ public class RegistroUsuariosService {
 			datosValidados.put("telefonoRequerido", "El telefono es obligatorio");
 			datosNoValidos = true;
 		}
-		
-		if(usuario.getCorreo() == null) {
-			datosValidados.put("correoRequerido", "El correo es obligatorio");
-			datosNoValidos = true;
-		}
+
 		
 		datosValidados.put("datosNoValidos", datosNoValidos);
 		return datosValidados;

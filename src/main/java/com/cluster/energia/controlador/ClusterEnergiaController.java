@@ -21,9 +21,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.cluster.energia.logicanegocio.ActualizarDatos;
+import com.cluster.energia.logicanegocio.CategoriaService;
 import com.cluster.energia.logicanegocio.ListadoYDetalleUsuarios;
 import com.cluster.energia.logicanegocio.InicioSesionService;
 import com.cluster.energia.logicanegocio.RegistroUsuariosService;
+import com.cluster.energia.logicanegocio.TiposDocumentosService;
+import com.cluster.energia.modelo.Categoria;
+import com.cluster.energia.modelo.TipoDocumento;
+import com.cluster.energia.modelo.TipoUsuario;
 import com.cluster.energia.modelo.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -45,7 +50,13 @@ public class ClusterEnergiaController {
 	@Autowired
 	private RegistroUsuariosService registroUsuariosService;
 
-	@GetMapping(value = "/listar")
+	@Autowired
+	private TiposDocumentosService tiposDocumentosService;
+
+	@Autowired
+	private CategoriaService categoriaService;
+
+	@GetMapping(value = "/listarUsuariosAdministrador")
 	public ResponseEntity<List<Usuario>> listarUsuarios(@RequestHeader String Authorization) {
 
 		if (Authorization != null) {
@@ -61,28 +72,16 @@ public class ClusterEnergiaController {
 		return null;
 	}
 
-	@GetMapping(value = "/listarUsuarios")
-	public ResponseEntity<List<Usuario>> usuarios(@RequestHeader String Authorization) {
+	@GetMapping(value = "/listarTiposUsuario")
+	public ResponseEntity<List<TipoUsuario>> listarTiposUsuario() {
 
-		if (Authorization != null) {
+		var tiposUsuarios = clusterEnergiaService.listarTiposUsuario();
 
-			var listaUsuarios = clusterEnergiaService.usuarios();
-
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaUsuarios);
+		if (!tiposUsuarios.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(tiposUsuarios);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(tiposUsuarios);
 		}
-		return null;
-	}
-
-	@GetMapping(value = "/listarAdministradores")
-	public ResponseEntity<List<Usuario>> listarAdministradores(@RequestHeader String Authorization) {
-
-		if (Authorization != null) {
-
-			var listaUsuarios = clusterEnergiaService.administradores();
-
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaUsuarios);
-		}
-		return null;
 	}
 
 	@PostMapping("/registrar")
@@ -103,6 +102,165 @@ public class ClusterEnergiaController {
 		var cantidadUsuarios = clusterEnergiaService.cantidadUsuariosYAdministradores();
 
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cantidadUsuarios);
+	}
+
+	@GetMapping("/cantidadTipoDocumentos")
+	public ResponseEntity<Map<String, Object>> cantidadTipoDocumentos() {
+
+		var cantidadTipoDocumentos = clusterEnergiaService.cantidadTipoDocumentos();
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cantidadTipoDocumentos);
+	}
+	
+	@GetMapping("/cantidadCategorias")
+	public ResponseEntity<Map<String, Object>> cantidadCategorias() {
+
+		var cantidadCategorias = clusterEnergiaService.cantidadCategorias();
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cantidadCategorias);
+	}
+	
+	@GetMapping("/tipoDocumento")
+	public ResponseEntity<List<TipoDocumento>> tiposDocumentos() {
+
+		var listaTiposDocuemntos = tiposDocumentosService.tiposDocumentos();
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaTiposDocuemntos);
+	}
+
+	@GetMapping("/detalleDocumento/{id}")
+	public ResponseEntity<TipoDocumento> detalleTipoDocumento(@PathVariable Long id,
+			@RequestHeader String Authorization) {
+
+		if (Authorization != null) {
+
+			var detalleDocumento = tiposDocumentosService.detalleTipoDocumento(id);
+
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(detalleDocumento);
+		}
+		return null;
+	}
+
+	@PostMapping("/guardarDocumento")
+	public ResponseEntity<Map<String, Object>> crearDocumento(@RequestBody TipoDocumento tipoDocumento,
+			@RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var documento = tiposDocumentosService.guardarTipoDocumento(tipoDocumento);
+
+			if (documento != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(documento);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
+	}
+
+	@PutMapping("/actualizarDocumento/{id}")
+	public ResponseEntity<TipoDocumento> actualizarDocumento(@PathVariable Long id,
+			@RequestBody TipoDocumento tipoDocumento, @RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var actualizarDocumento = tiposDocumentosService.actualizarDocumento(id, tipoDocumento);
+
+			if (actualizarDocumento != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(actualizarDocumento);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
+	}
+
+	@DeleteMapping("/eliminarDocumento/{id}")
+	public ResponseEntity<HashMap<String, Object>> eliminarDocumento(@PathVariable Long id,
+			@RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var eliminarDocumento = tiposDocumentosService.eliminarDocumento(id);
+
+			if (eliminarDocumento != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(eliminarDocumento);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
+	}
+
+	@GetMapping("/listarCategorias")
+	public ResponseEntity<List<Categoria>> listarCategorias() {
+
+		var listaCategoria = categoriaService.listarCategorias();
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(listaCategoria);
+	}
+
+	@GetMapping("/detalleCategoria/{id}")
+	public ResponseEntity<Categoria> detalleCategoria(@PathVariable Long id, @RequestHeader String Authorization) {
+
+		if (Authorization != null) {
+
+			var detalleCategoria = categoriaService.detalleCategoria(id);
+
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(detalleCategoria);
+		}
+		return null;
+	}
+
+	@PostMapping("/guardarCategoria")
+	public ResponseEntity<Map<String, Object>> crearCategoria(@RequestBody Categoria categoria,
+			@RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var categorias = categoriaService.guardarCategoria(categoria);
+
+			if (categoria != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(categorias);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
+	}
+
+	@PutMapping("/actualizarCategoria/{id}")
+	public ResponseEntity<Categoria> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria categoria,
+			@RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var actualizarCategoria = categoriaService.actualizarCategoria(id, categoria);
+
+			if (actualizarCategoria != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(actualizarCategoria);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
+	}
+
+	@DeleteMapping("/eliminarCategoria/{id}")
+	public ResponseEntity<HashMap<String, Object>> eliminarCategoria(@PathVariable Long id,
+			@RequestHeader String Authorization) throws Exception {
+
+		if (Authorization != null) {
+			var eliminarCategoria = categoriaService.eliminarCategoria(id);
+
+			if (eliminarCategoria != null) {
+
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(eliminarCategoria);
+			} else {
+				throw new Exception("No se encontró el tipo de documento, por favor verifique");
+			}
+		}
+		return null;
 	}
 
 	@PutMapping("/actualizar/{id}")
